@@ -1,0 +1,49 @@
+
+package dateformatter;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ *
+ * @author jale.mammadli
+ */
+public class DateFormatter {
+
+    public static void main(String[] args) {
+        System.out.println(dateFormatter("2020-01-13 23:25:00+04:30"));
+    }
+    public static String dateFormatter(String date){
+        Calendar calendar = Calendar.getInstance();
+        String modifiedDate = "";
+        try {
+            Date formattedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date);
+            calendar.setTime(formattedDate);
+            String[] splitDateBySpace = date.split(" ");
+            if(splitDateBySpace[1].contains("+")){
+                modifiedDate = modifyDateBySign(calendar, splitDateBySpace[1], "\\+");
+            }
+            else {
+                modifiedDate = modifyDateBySign(calendar, splitDateBySpace[1], "-");
+            }
+            return modifiedDate;
+        } catch (ParseException ex) {
+            Logger.getLogger(DateFormatter.class.getName()).log(Level.SEVERE, null, ex);
+            return "Exception occured! Message: "+ex.getMessage();
+        }
+    }
+    public static String modifyDateBySign(Calendar date,String time,String sign){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
+        String[] splitTimeBySign = time.split(sign);
+        String[] splitTimeByComma = splitTimeBySign[1].split(":");
+        sign = (!sign.equals("-"))?"":"-";
+        date.add(Calendar.HOUR, Integer.parseInt(sign+splitTimeByComma[0]));
+        date.add(Calendar.MINUTE, Integer.parseInt(sign+splitTimeByComma[1]));
+        Date resultDate = date.getTime();
+        return dateFormat.format(resultDate);
+    }
+}
